@@ -25,8 +25,8 @@
         body {
             background-color: var(--bg-color);
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(255, 42, 116, 0.15) 0%, transparent 70%),
-                radial-gradient(circle at 50% 100%, rgba(0, 242, 254, 0.1) 0%, transparent 70%);
+                radial-gradient(circle at 50% 0%, rgba(255, 42, 116, 0.2) 0%, transparent 70%),
+                radial-gradient(circle at 50% 100%, rgba(0, 242, 254, 0.15) 0%, transparent 70%);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
@@ -37,12 +37,12 @@
 
         .app-container {
             width: 100%;
-            max-width: 520px;
+            max-width: 540px;
             background: var(--card-bg);
             border-radius: 28px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 42, 116, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px rgba(255, 42, 116, 0.25);
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             position: relative;
         }
 
@@ -67,7 +67,7 @@
             font-weight: 800;
             letter-spacing: 1.5px;
             margin-bottom: 10px;
-            box-shadow: 0 0 10px rgba(255, 42, 116, 0.4);
+            box-shadow: 0 0 12px rgba(255, 42, 116, 0.5);
         }
 
         .on-air-dot {
@@ -83,7 +83,7 @@
         }
 
         .header h1 {
-            font-size: 1.6rem; font-weight: 800;
+            font-size: 1.65rem; font-weight: 800;
             background: linear-gradient(135deg, #fff 30%, var(--accent-cyan));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -94,7 +94,7 @@
             margin-top: 4px; font-weight: 600; letter-spacing: 1px;
         }
 
-        .content { padding: 25px; }
+        .content { padding: 22px; }
         .view-section { display: none; }
         .view-section.active { display: block; }
 
@@ -106,25 +106,25 @@
 
         .form-group input {
             width: 100%; padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.35);
             border: 1.5px solid rgba(255, 255, 255, 0.1);
             border-radius: 14px; font-size: 1rem; color: #fff; outline: none;
             transition: all 0.3s;
         }
         .form-group input:focus {
             border-color: var(--accent-pink);
-            box-shadow: 0 0 10px rgba(255, 42, 116, 0.3);
+            box-shadow: 0 0 12px rgba(255, 42, 116, 0.4);
         }
 
         .radio-display-box {
-            background: #0a0d14;
-            border: 2px solid rgba(0, 242, 254, 0.3);
-            border-radius: 20px; padding: 25px;
+            background: #06080e;
+            border: 2px solid rgba(0, 242, 254, 0.4);
+            border-radius: 20px; padding: 20px;
             text-align: center; margin-bottom: 20px;
-            min-height: 220px;
+            min-height: 250px;
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 242, 254, 0.15);
             position: relative;
             overflow: hidden;
         }
@@ -139,73 +139,139 @@
         }
         .btn:hover { transform: translateY(-2px); }
 
+        /* 5종 모드 버튼 스크롤형 디자인 */
         .draw-mode-select {
-            display: flex; gap: 8px; margin-bottom: 15px;
+            display: flex; gap: 6px; margin-bottom: 15px;
+            overflow-x: auto; padding-bottom: 6px;
         }
+        .draw-mode-select::-webkit-scrollbar { height: 4px; }
+        .draw-mode-select::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
 
         .mode-btn {
-            flex: 1; padding: 10px; background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
-            color: var(--text-sub); font-size: 0.85rem; cursor: pointer; font-weight: 600;
-            transition: all 0.2s;
+            flex: 0 0 auto; padding: 10px 14px; background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            color: var(--text-sub); font-size: 0.82rem; cursor: pointer; font-weight: 600;
+            transition: all 0.2s; white-space: nowrap;
         }
 
         .mode-btn.active {
             background: rgba(0, 242, 254, 0.15); border-color: var(--accent-cyan);
-            color: var(--accent-cyan);
+            color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
         }
 
         .result-card {
             display: none; background: rgba(255, 255, 255, 0.05);
             border: 2px solid var(--accent-gold); border-radius: 18px;
             padding: 20px; text-align: center; margin-top: 15px;
-            box-shadow: 0 0 25px rgba(255, 183, 3, 0.25);
+            box-shadow: 0 0 30px rgba(255, 183, 3, 0.3);
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         @keyframes popIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+            0% { transform: scale(0.7) translateY(10px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
         }
 
         .youtube-btn {
             display: inline-flex; align-items: center; justify-content: center;
             gap: 8px; background: #ff0000; color: white; text-decoration: none;
             padding: 12px 20px; border-radius: 25px; font-weight: bold; width: 100%; margin-top: 15px;
-            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.5);
         }
 
+        /* 5가지 세련된 추첨 애니메이션 스타일 정의 */
         .slot-text {
-            font-size: 2rem; font-weight: 800; color: var(--accent-gold);
-            text-shadow: 0 0 15px rgba(255, 183, 3, 0.6);
-            animation: slotBounce 0.15s infinite alternate;
+            font-size: 2.1rem; font-weight: 900; color: var(--accent-gold);
+            text-shadow: 0 0 20px rgba(255, 183, 3, 0.8);
+            animation: slotBounce 0.12s infinite alternate;
         }
 
         @keyframes slotBounce {
-            0% { transform: translateY(-4px) scale(0.98); }
-            100% { transform: translateY(4px) scale(1.02); }
+            0% { transform: translateY(-6px) scale(0.96); filter: blur(1px); }
+            100% { transform: translateY(6px) scale(1.04); filter: blur(0px); }
         }
 
         .countdown-num {
             font-size: 5.5rem; font-weight: 900; color: var(--accent-pink);
-            text-shadow: 0 0 30px var(--accent-pink);
-            animation: zoomPulse 0.8s infinite;
+            text-shadow: 0 0 35px var(--accent-pink), 0 0 10px #fff;
+            animation: zoomPulse 0.9s infinite cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
         @keyframes zoomPulse {
-            0% { transform: scale(0.6); opacity: 0.3; }
-            50% { transform: scale(1.1); opacity: 1; }
+            0% { transform: scale(0.4); opacity: 0.1; }
+            50% { transform: scale(1.15); opacity: 1; }
             100% { transform: scale(1); opacity: 1; }
+        }
+
+        .lp-record {
+            width: 100px; height: 100px; border-radius: 50%;
+            background: radial-gradient(circle, #333 15%, #111 16%, #222 35%, #000 36%, #111 70%);
+            border: 4px solid var(--accent-gold);
+            box-shadow: 0 0 20px rgba(255, 183, 3, 0.5);
+            animation: spin 0.25s linear infinite;
+            display: flex; justify-content: center; align-items: center; margin-bottom: 12px;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .radar-box {
+            width: 100px; height: 100px; border-radius: 50%;
+            border: 2px solid var(--accent-cyan);
+            position: relative; margin-bottom: 12px;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+            overflow: hidden;
+        }
+        .radar-sweep {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: conic-gradient(from 0deg, transparent 0deg, transparent 270deg, rgba(0, 242, 254, 0.6) 360deg);
+            animation: spin 1s linear infinite;
+            border-radius: 50%;
+        }
+
+        .eq-bar-container {
+            display: flex; gap: 4px; align-items: flex-end; height: 30px; margin-top: 10px;
+        }
+        .eq-bar {
+            width: 6px; background: var(--accent-pink); border-radius: 3px;
+            animation: eqAnim 0.3s ease infinite alternate;
+        }
+        @keyframes eqAnim { 0% { height: 5px; } 100% { height: 28px; } }
+
+        /* 유튜브 썸네일 스타일 */
+        .yt-thumbnail-wrapper {
+            width: 100%;
+            height: 185px;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+        }
+
+        .yt-thumbnail-img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        .yt-play-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            display: flex; justify-content: center; align-items: center;
+            transition: background 0.3s;
+        }
+        .yt-play-overlay:hover { background: rgba(0, 0, 0, 0.1); }
+
+        .yt-play-icon {
+            font-size: 3.2rem; color: #ff0000;
+            filter: drop-shadow(0 0 12px rgba(0,0,0,0.9));
         }
 
         .story-list-container {
             margin-top: 25px;
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 15px;
-            max-height: 280px;
-            overflow-y: auto;
+            border-radius: 16px; padding: 15px;
+            max-height: 250px; overflow-y: auto;
         }
 
         .story-list-header {
@@ -219,16 +285,12 @@
             display: flex; justify-content: space-between; align-items: center;
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 10px 12px;
-            margin-bottom: 8px;
+            border-radius: 10px; padding: 10px 12px; margin-bottom: 8px;
             font-size: 0.88rem;
         }
 
         .story-item.drawn {
-            opacity: 0.5;
-            background: rgba(0, 0, 0, 0.4);
-            border-style: dashed;
+            opacity: 0.5; background: rgba(0, 0, 0, 0.4); border-style: dashed;
         }
 
         .story-info { flex: 1; margin-right: 10px; }
@@ -240,19 +302,11 @@
         }
 
         .delete-btn {
-            background: rgba(255, 71, 87, 0.2);
-            color: var(--danger-color);
-            border: 1px solid var(--danger-color);
-            border-radius: 6px;
-            padding: 5px 10px;
-            font-size: 0.78rem;
-            cursor: pointer;
-            transition: all 0.2s;
+            background: rgba(255, 71, 87, 0.2); color: var(--danger-color);
+            border: 1px solid var(--danger-color); border-radius: 6px;
+            padding: 5px 10px; font-size: 0.78rem; cursor: pointer; transition: all 0.2s;
         }
-        .delete-btn:hover {
-            background: var(--danger-color);
-            color: #fff;
-        }
+        .delete-btn:hover { background: var(--danger-color); color: #fff; }
     </style>
 
     <script type="module">
@@ -281,6 +335,19 @@
 
         let localStories = [];
         let selectedDrawMode = 'freq';
+
+        function getYoutubeThumbnail(url) {
+            if (!url) return 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500&auto=format&fit=crop';
+            let videoId = "";
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+
+            if (match && match[2].length === 11) {
+                videoId = match[2];
+                return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+            }
+            return 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500&auto=format&fit=crop';
+        }
 
         window.addEventListener('DOMContentLoaded', () => {
             if (mode === 'admin') {
@@ -318,7 +385,77 @@
             });
         };
 
+        // 5가지 화려한 연출 실행 함수
+        function runDrawAnimation(containerId, drawMode) {
+            const container = document.getElementById(containerId);
+            let timer = null;
+
+            if (drawMode === 'freq') {
+                timer = setInterval(() => {
+                    const freq = (Math.random() * (107.9 - 88.1) + 88.1).toFixed(1);
+                    container.innerHTML = `
+                        <i class="fa-solid fa-radio fa-bounce" style="font-size:3rem; color:var(--accent-pink); margin-bottom:12px;"></i>
+                        <div style="font-size:2.5rem; font-weight:900; color:var(--accent-cyan); text-shadow:0 0 15px var(--accent-cyan);">📻 FM ${freq} MHz</div>
+                        <p style="color:var(--text-sub); margin-top:8px; font-size:0.9rem;">주파수 신호 검색 중...</p>
+                    `;
+                }, 70);
+            } else if (drawMode === 'slot') {
+                timer = setInterval(() => {
+                    const randIdx = Math.floor(Math.random() * (localStories.length || 1));
+                    const tempName = localStories[randIdx]?.nickname || "행운의 주인공";
+                    const tempSong = localStories[randIdx]?.songTitle || "신청곡 탐색 중";
+                    container.innerHTML = `
+                        <div class="slot-text">🎰 ${tempName} 님</div>
+                        <div style="color:var(--accent-cyan); font-size:1.1rem; font-weight:bold; margin-top:8px;">🎵 ${tempSong}</div>
+                    `;
+                }, 80);
+            } else if (drawMode === 'countdown') {
+                let count = 5; // 5초 카운트다운
+                container.innerHTML = `<div class="countdown-num">${count}</div>`;
+                timer = setInterval(() => {
+                    count--;
+                    if (count > 0) {
+                        container.innerHTML = `<div class="countdown-num">${count}</div>`;
+                    } else {
+                        container.innerHTML = `
+                            <i class="fa-solid fa-star fa-spin" style="font-size:3rem; color:var(--accent-gold); margin-bottom:10px;"></i>
+                            <div style="font-size:2.2rem; font-weight:900; color:var(--accent-gold);">✨ 당첨자 발표! ✨</div>
+                        `;
+                    }
+                }, 1000);
+            } else if (drawMode === 'vinyl') {
+                timer = setInterval(() => {
+                    const randIdx = Math.floor(Math.random() * (localStories.length || 1));
+                    const tempSong = localStories[randIdx]?.songTitle || "LP 트랙 탐색 중";
+                    container.innerHTML = `
+                        <div class="lp-record"><i class="fa-solid fa-music" style="color:var(--accent-gold); font-size:1.8rem;"></i></div>
+                        <div style="font-size:1.2rem; font-weight:bold; color:#fff;">💿 LP 회전 중...</div>
+                        <div style="color:var(--accent-pink); font-size:0.9rem; margin-top:4px;">${tempSong}</div>
+                    `;
+                }, 90);
+            } else if (drawMode === 'radar') {
+                timer = setInterval(() => {
+                    const randIdx = Math.floor(Math.random() * (localStories.length || 1));
+                    const tempName = localStories[randIdx]?.nickname || "스캐닝 중...";
+                    container.innerHTML = `
+                        <div class="radar-box"><div class="radar-sweep"></div></div>
+                        <div style="font-size:1.2rem; font-weight:bold; color:var(--accent-cyan);">⚡ [SEARCHING] ${tempName}</div>
+                        <div class="eq-bar-container">
+                            <div class="eq-bar" style="animation-delay:0.1s;"></div>
+                            <div class="eq-bar" style="animation-delay:0.3s;"></div>
+                            <div class="eq-bar" style="animation-delay:0.2s;"></div>
+                            <div class="eq-bar" style="animation-delay:0.4s;"></div>
+                            <div class="eq-bar" style="animation-delay:0.15s;"></div>
+                        </div>
+                    `;
+                }, 100);
+            }
+            return timer;
+        }
+
         function initAdminMode() {
+            let adminInterval = null;
+
             onValue(storiesRef, (snapshot) => {
                 const data = snapshot.val();
                 localStories = [];
@@ -356,6 +493,43 @@
                     storyListEl.appendChild(item);
                 });
             });
+
+            onValue(currentStateRef, (snapshot) => {
+                const data = snapshot.val();
+                if (!data) return;
+
+                const displayBox = document.getElementById('adminDisplayBox');
+
+                if (data.status === 'drawing') {
+                    if (adminInterval) clearInterval(adminInterval);
+                    document.getElementById('adminResultCard').style.display = 'none';
+                    adminInterval = runDrawAnimation('adminDisplayBox', data.drawMode);
+                } else if (data.status === 'completed' && data.winner) {
+                    if (adminInterval) clearInterval(adminInterval);
+
+                    const thumbUrl = getYoutubeThumbnail(data.winner.youtubeUrl);
+
+                    displayBox.innerHTML = `
+                        <a href="${data.winner.youtubeUrl}" target="_blank" style="width:100%; text-decoration:none;">
+                            <div class="yt-thumbnail-wrapper">
+                                <img src="${thumbUrl}" class="yt-thumbnail-img" alt="유튜브 썸네일">
+                                <div class="yt-play-overlay">
+                                    <i class="fa-brands fa-youtube yt-play-icon"></i>
+                                </div>
+                            </div>
+                        </a>
+                        <div style="font-size:1.4rem; font-weight:bold; color:var(--accent-gold);">🎉 ${data.winner.nickname} 님 당첨!</div>
+                        <div style="color:#fff; margin-top:4px; font-size:0.95rem;">🎵 ${data.winner.songTitle}</div>
+                    `;
+
+                    document.getElementById('adminWinnerUser').innerText = `🎙️ 당첨자: ${data.winner.nickname} 님`;
+                    document.getElementById('adminWinnerSong').innerText = `🎵 신청곡: ${data.winner.songTitle}`;
+                    document.getElementById('adminWinnerYoutube').href = data.winner.youtubeUrl;
+                    document.getElementById('adminResultCard').style.display = 'block';
+
+                    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                }
+            });
         }
 
         window.deleteStory = function(storyId) {
@@ -373,6 +547,7 @@
             }
         };
 
+        // 5초 타임 적용 추첨 함수
         window.startRandomDraw = function() {
             const availableStories = localStories.filter(s => !s.isDrawn);
 
@@ -394,6 +569,7 @@
                 timestamp: Date.now()
             });
 
+            // 추첨 대기 시간을 5000ms(5초)로 지정
             setTimeout(() => {
                 update(ref(db, `stories/${winner.id}`), { isDrawn: true });
 
@@ -403,81 +579,47 @@
                     winner: winner,
                     timestamp: Date.now()
                 });
-
-                document.getElementById('adminWinnerUser').innerText = `🎙️ 당첨자: ${winner.nickname} 님`;
-                document.getElementById('adminWinnerSong').innerText = `🎵 신청곡: ${winner.songTitle}`;
-                document.getElementById('adminWinnerYoutube').href = winner.youtubeUrl;
-                document.getElementById('adminResultCard').style.display = 'block';
-
-                confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-            }, 3800);
+            }, 5000);
         };
 
         function initDisplayMode() {
-            let activeInterval = null;
+            let displayInterval = null;
 
             onValue(currentStateRef, (snapshot) => {
                 const data = snapshot.val();
                 if (!data) return;
 
-                const animArea = document.getElementById('drawAnimationArea');
+                const displayBox = document.getElementById('displayBox');
 
                 if (data.status === 'drawing') {
-                    if (activeInterval) clearInterval(activeInterval);
-
-                    document.getElementById('displayIdle').style.display = 'none';
+                    if (displayInterval) clearInterval(displayInterval);
                     document.getElementById('displayResultCard').style.display = 'none';
-                    document.getElementById('displayDrawing').style.display = 'block';
-
-                    if (data.drawMode === 'freq') {
-                        activeInterval = setInterval(() => {
-                            const freq = (Math.random() * (107.9 - 88.1) + 88.1).toFixed(1);
-                            animArea.innerHTML = `
-                                <i class="fa-solid fa-radio fa-bounce" style="font-size:2.8rem; color:var(--accent-pink); margin-bottom:12px;"></i>
-                                <div style="font-size:2.4rem; font-weight:800; color:var(--accent-cyan);">📻 FM ${freq} MHz</div>
-                                <p style="color:var(--text-sub); margin-top:8px;">주파수를 조율하며 사연을 찾고 있습니다...</p>
-                            `;
-                        }, 80);
-                    } else if (data.drawMode === 'slot') {
-                        activeInterval = setInterval(() => {
-                            const randIdx = Math.floor(Math.random() * (localStories.length || 1));
-                            const tempName = localStories[randIdx]?.nickname || "행운의 주인공";
-                            const tempSong = localStories[randIdx]?.songTitle || "신청곡 탐색 중";
-                            animArea.innerHTML = `
-                                <div class="slot-text">🎰 ${tempName} 님</div>
-                                <div style="color:var(--text-sub); font-size:1rem; margin-top:8px;">🎵 ${tempSong}</div>
-                            `;
-                        }, 90);
-                    } else if (data.drawMode === 'countdown') {
-                        let count = 3;
-                        animArea.innerHTML = `<div class="countdown-num">${count}</div>`;
-                        activeInterval = setInterval(() => {
-                            count--;
-                            if (count > 0) {
-                                animArea.innerHTML = `<div class="countdown-num">${count}</div>`;
-                            } else {
-                                animArea.innerHTML = `
-                                    <i class="fa-solid fa-star fa-spin" style="font-size:3rem; color:var(--accent-gold); margin-bottom:10px;"></i>
-                                    <div style="font-size:2.2rem; font-weight:800; color:var(--accent-gold);">✨ 당첨자 발표! ✨</div>
-                                `;
-                            }
-                        }, 1000);
-                    }
-
+                    displayInterval = runDrawAnimation('displayBox', data.drawMode);
                 } else if (data.status === 'completed' && data.winner) {
-                    if (activeInterval) clearInterval(activeInterval);
+                    if (displayInterval) clearInterval(displayInterval);
 
-                    document.getElementById('displayDrawing').style.display = 'none';
-                    document.getElementById('displayIdle').style.display = 'none';
+                    const thumbUrl = getYoutubeThumbnail(data.winner.youtubeUrl);
+
+                    displayBox.innerHTML = `
+                        <a href="${data.winner.youtubeUrl}" target="_blank" style="width:100%; text-decoration:none;">
+                            <div class="yt-thumbnail-wrapper" style="height:210px;">
+                                <img src="${thumbUrl}" class="yt-thumbnail-img" alt="유튜브 썸네일">
+                                <div class="yt-play-overlay">
+                                    <i class="fa-brands fa-youtube yt-play-icon" style="font-size:3.8rem;"></i>
+                                </div>
+                            </div>
+                        </a>
+                        <div style="font-size:1.6rem; font-weight:bold; color:var(--accent-gold);">✨ 당첨을 축하합니다! ✨</div>
+                    `;
 
                     document.getElementById('displayWinnerUser').innerText = `🎉 ${data.winner.nickname} 님`;
                     document.getElementById('displayWinnerSong').innerText = `🎵 ${data.winner.songTitle}`;
                     document.getElementById('displayResultCard').style.display = 'block';
 
-                    confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } });
+                    confetti({ particleCount: 180, spread: 100, origin: { y: 0.5 } });
                     setTimeout(() => {
-                        confetti({ particleCount: 100, angle: 60, spread: 55, origin: { x: 0 } });
-                        confetti({ particleCount: 100, angle: 120, spread: 55, origin: { x: 1 } });
+                        confetti({ particleCount: 120, angle: 60, spread: 60, origin: { x: 0 } });
+                        confetti({ particleCount: 120, angle: 120, spread: 60, origin: { x: 1 } });
                     }, 300);
                 }
             });
@@ -496,6 +638,7 @@
     </div>
 
     <div class="content">
+        <!-- 1. 청취자 화면 -->
         <div id="userSection" class="view-section">
             <form id="storyForm" onsubmit="submitStory(event)">
                 <div class="form-group">
@@ -521,26 +664,33 @@
             </div>
         </div>
 
+        <!-- 2. 진행자 제어 및 관리자 화면 -->
         <div id="adminMainSection" class="view-section">
+            <!-- 확장된 5가지 연출 선택 버튼 -->
             <div class="draw-mode-select">
                 <button class="mode-btn active" onclick="setDrawMode('freq', this)">📻 주파수</button>
                 <button class="mode-btn" onclick="setDrawMode('slot', this)">🎰 슬롯머신</button>
-                <button class="mode-btn" onclick="setDrawMode('countdown', this)">⏳ 카운트다운</button>
+                <button class="mode-btn" onclick="setDrawMode('countdown', this)">⏳ 카운트다운(5s)</button>
+                <button class="mode-btn" onclick="setDrawMode('vinyl', this)">💿 LP 회전</button>
+                <button class="mode-btn" onclick="setDrawMode('radar', this)">⚡ 라이브 스캐너</button>
             </div>
 
-            <div class="radio-display-box" style="min-height: 160px;">
+            <!-- 진행자용 메인 디스플레이 박스 -->
+            <div id="adminDisplayBox" class="radio-display-box">
                 <i class="fa-solid fa-sliders" style="font-size: 2.2rem; color: var(--accent-pink);"></i>
                 <p style="margin-top: 10px; font-size: 1.05rem; font-weight: 600;">메인 DJ 추첨 콘솔</p>
+                <p style="color:var(--text-sub); font-size:0.8rem; margin-top:4px;">위 연출을 선택 후 하단 버튼을 클릭하세요 (5초 연출)</p>
             </div>
 
             <div id="adminResultCard" class="result-card">
                 <div id="adminWinnerUser" style="font-size: 1.2rem; font-weight: bold; color: var(--accent-gold);"></div>
                 <div id="adminWinnerSong" style="color: #fff; margin-top: 6px;"></div>
-                <a id="adminWinnerYoutube" href="#" target="_blank" class="youtube-btn"><i class="fa-brands fa-youtube"></i> 유튜브로 음악 재생하기</a>
+                <a id="adminWinnerYoutube" href="#" target="_blank" class="youtube-btn"><i class="fa-brands fa-youtube"></i> 유튜브에서 바로 재생하기</a>
             </div>
 
-            <button class="btn" onclick="startRandomDraw()" style="margin-top: 15px;"><i class="fa-solid fa-dice"></i> 선택한 연출로 추첨 시작</button>
+            <button class="btn" onclick="startRandomDraw()" style="margin-top: 15px;"><i class="fa-solid fa-dice"></i> 선택한 연출로 추첨 시작 (5초)</button>
 
+            <!-- 사연 관리 목록 영역 -->
             <div class="story-list-container">
                 <div class="story-list-header">
                     <span><i class="fa-solid fa-list-check"></i> 접수 사연 목록 (<span id="undrawnCount" style="color:var(--accent-gold);">0</span>/<span id="storyCount">0</span>)</span>
@@ -551,21 +701,17 @@
             </div>
         </div>
 
+        <!-- 3. 전광판 화면 -->
         <div id="displaySection" class="view-section">
-            <div class="radio-display-box" style="min-height: 250px;">
-                <div id="displayIdle">
-                    <i class="fa-solid fa-tower-broadcast" style="font-size: 3.5rem; color: var(--accent-cyan); margin-bottom: 15px;"></i>
-                    <p style="font-size: 1.2rem; font-weight: 700; color: #fff;">보이는 라디오 생방송 중</p>
-                    <p style="font-size: 0.9rem; color: var(--text-sub); margin-top: 5px;">사연 추첨을 기다리고 있습니다...</p>
-                </div>
-                <div id="displayDrawing" style="display: none; width:100%;">
-                    <div id="drawAnimationArea"></div>
-                </div>
+            <div id="displayBox" class="radio-display-box">
+                <i class="fa-solid fa-tower-broadcast" style="font-size: 3.5rem; color: var(--accent-cyan); margin-bottom: 15px;"></i>
+                <p style="font-size: 1.2rem; font-weight: 700; color: #fff;">보이는 라디오 생방송 중</p>
+                <p style="font-size: 0.9rem; color: var(--text-sub); margin-top: 5px;">사연 추첨을 기다리고 있습니다...</p>
             </div>
 
-            <div id="displayResultCard" class="result-card" style="padding: 25px;">
+            <div id="displayResultCard" class="result-card" style="padding: 20px;">
                 <div id="displayWinnerUser" style="font-size: 1.6rem; font-weight: bold; color: var(--accent-gold);"></div>
-                <div id="displayWinnerSong" style="color: #fff; margin-top: 10px; font-size: 1.2rem;"></div>
+                <div id="displayWinnerSong" style="color: #fff; margin-top: 8px; font-size: 1.1rem;"></div>
             </div>
         </div>
     </div>
