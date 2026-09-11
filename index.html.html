@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사랑부 보이는 라디오 📻 LIVE</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #0d0f18;
+            --card-bg: #161b26;
+            --accent-pink: #ff2a74;
+            --accent-cyan: #00f2fe;
+            --accent-gold: #ffb703;
+            --text-main: #ffffff;
+            --text-sub: #a0a8c0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Pretendard Variable", sans-serif; }
+        
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(255, 42, 116, 0.15) 0%, transparent 70%),
+                radial-gradient(circle at 50% 100%, rgba(0, 242, 254, 0.1) 0%, transparent 70%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            border-radius: 28px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 42, 116, 0.2);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .header {
+            background: #090c13;
+            padding: 25px 20px 20px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .on-air-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 42, 116, 0.15);
+            color: var(--accent-pink);
+            border: 1px solid var(--accent-pink);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            box-shadow: 0 0 10px rgba(255, 42, 116, 0.4);
+        }
+
+        .on-air-dot {
+            width: 8px; height: 8px;
+            background-color: var(--accent-pink);
+            border-radius: 50%;
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.8); }
+        }
+
+        .header h1 {
+            font-size: 1.6rem; font-weight: 800;
+            background: linear-gradient(135deg, #fff 30%, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .radio-freq {
+            font-size: 0.85rem; color: var(--accent-gold);
+            margin-top: 4px; font-weight: 600; letter-spacing: 1px;
+        }
+
+        .content { padding: 25px; }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; font-weight: 600; margin-bottom: 8px;
+            font-size: 0.9rem; color: var(--text-sub);
+        }
+
+        .form-group input {
+            width: 100%; padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px; font-size: 1rem; color: #fff; outline: none;
+        }
+
+        .radio-display-box {
+            background: #0a0d14;
+            border: 2px solid rgba(0, 242, 254, 0.3);
+            border-radius: 20px; padding: 25px;
+            text-align: center; margin-bottom: 20px;
+            min-height: 220px;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+
+        .btn {
+            width: 100%; padding: 16px;
+            background: linear-gradient(135deg, var(--accent-pink), #e01e5a);
+            color: white; border: none; border-radius: 14px;
+            font-size: 1.05rem; font-weight: 700; cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 42, 116, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .draw-mode-select {
+            display: flex; gap: 8px; margin-bottom: 15px;
+        }
+
+        .mode-btn {
+            flex: 1; padding: 10px; background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+            color: var(--text-sub); font-size: 0.85rem; cursor: pointer; font-weight: 600;
+        }
+
+        .mode-btn.active {
+            background: rgba(0, 242, 254, 0.15); border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .result-card {
+            display: none; background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--accent-gold); border-radius: 18px;
+            padding: 20px; text-align: center; margin-top: 15px;
+        }
+
+        .youtube-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 8px; background: #ff0000; color: white; text-decoration: none;
+            padding: 12px 20px; border-radius: 25px; font-weight: bold; width: 100%; margin-top: 15px;
+        }
+
+        .slot-text {
+            font-size: 1.8rem; font-weight: 800; color: var(--accent-gold);
+            text-shadow: 0 0 15px rgba(255, 183, 3, 0.5);
+            animation: bounce 0.3s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(-3px); }
+            100% { transform: translateY(3px); }
+        }
+    </style>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        window.__FIREBASE_CONFIG__ = {
+            apiKey: "AIzaSyBtWSnBN89ZmA9H7jjMx06fHE650b7CT-A",
+            authDomain: "sarangbuvisualradio.firebaseapp.com",
+            databaseURL: "https://sarangbuvisualradio-default-rtdb.firebaseio.com",
+            projectId: "sarangbuvisualradio",
+            storageBucket: "sarangbuvisualradio.firebasestorage.app",
+            messagingSenderId: "577953137544",
+            appId: "1:577953137544:web:423712a3f3491866fc703d",
+            measurementId: "G-76RPNG3JKL"
+        };
+
+        const app = initializeApp(window.__FIREBASE_CONFIG__);
+        const db = getDatabase(app);
+
+        const storiesRef = ref(db, 'stories');
+        const currentStateRef = ref(db, 'state/current');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode'); 
+
+        let localStories = [];
+        let selectedDrawMode = 'freq'; // 기본값: 주파수 모드
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (mode === 'admin') {
+                document.getElementById('adminMainSection').classList.add('active');
+                initAdminMode();
+            } else if (mode === 'display') {
+                document.getElementById('displaySection').classList.add('active');
+                initDisplayMode();
+            } else {
+                document.getElementById('userSection').classList.add('active');
+            }
+        });
+
+        window.setDrawMode = function(modeName, btnElement) {
+            selectedDrawMode = modeName;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+        };
+
+        window.submitStory = function(e) {
+            e.preventDefault();
+            const nickname = document.getElementById('nickname').value.trim();
+            const songTitle = document.getElementById('songTitle').value.trim();
+            const youtubeUrl = document.getElementById('youtubeUrl').value.trim();
+
+            push(storiesRef, { nickname, songTitle, youtubeUrl, createdAt: Date.now() })
+            .then(() => {
+                document.getElementById('storyForm').style.display = 'none';
+                document.getElementById('submittedCard').style.display = 'block';
+            });
+        };
+
+        function initAdminMode() {
+            onValue(storiesRef, (snapshot) => {
+                const data = snapshot.val();
+                localStories = [];
+                if (data) {
+                    Object.keys(data).forEach(key => localStories.push({ id: key, ...data[key] }));
+                }
+                document.getElementById('storyCount').innerText = localStories.length;
+            });
+        }
+
+        window.startRandomDraw = function() {
+            if (localStories.length === 0) {
+                alert("접수된 사연이 없습니다!");
+                return;
+            }
+
+            const winner = localStories[Math.floor(Math.random() * localStories.length)];
+
+            set(currentStateRef, {
+                status: 'drawing',
+                drawMode: selectedDrawMode,
+                winner: null,
+                timestamp: Date.now()
+            });
+
+            setTimeout(() => {
+                set(currentStateRef, {
+                    status: 'completed',
+                    drawMode: selectedDrawMode,
+                    winner: winner,
+                    timestamp: Date.now()
+                });
+
+                document.getElementById('adminWinnerUser').innerText = `🎙️ 당첨자: ${winner.nickname} 님`;
+                document.getElementById('adminWinnerSong').innerText = `🎵 신청곡: ${winner.songTitle}`;
+                document.getElementById('adminWinnerYoutube').href = winner.youtubeUrl;
+                document.getElementById('adminResultCard').style.display = 'block';
+
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            }, 3500);
+        };
+
+        function initDisplayMode() {
+            let intervalId = null;
+
+            onValue(currentStateRef, (snapshot) => {
+                const data = snapshot.val();
+                if (!data) return;
+
+                if (data.status === 'drawing') {
+                    document.getElementById('displayIdle').style.display = 'none';
+                    document.getElementById('displayResultCard').style.display = 'none';
+                    document.getElementById('displayDrawing').style.display = 'block';
+
+                    const animArea = document.getElementById('drawAnimationArea');
+
+                    if (data.drawMode === 'freq') {
+                        let freq = 88.1;
+                        intervalId = setInterval(() => {
+                            freq = (Math.random() * (107.9 - 88.1) + 88.1).toFixed(1);
+                            animArea.innerHTML = `<div style="font-size:2.5rem; font-weight:800; color:var(--accent-cyan);">📻 FM ${freq} MHz</div><p style="color:var(--text-sub); margin-top:5px;">주파수 탐색 중...</p>`;
+                        }, 80);
+                    } else if (data.drawMode === 'slot') {
+                        intervalId = setInterval(() => {
+                            const randIdx = Math.floor(Math.random() * localStories.length);
+                            const tempName = localStories[randIdx]?.nickname || "사연자";
+                            animArea.innerHTML = `<div class="slot-text">🎰 ${tempName} 님</div><p style="color:var(--text-sub); margin-top:5px;">슬롯머신 회전 중!</p>`;
+                        }, 100);
+                    } else if (data.drawMode === 'countdown') {
+                        let count = 3;
+                        animArea.innerHTML = `<div style="font-size:4rem; font-weight:900; color:var(--accent-pink);">${count}</div>`;
+                        intervalId = setInterval(() => {
+                            count--;
+                            if (count > 0) {
+                                animArea.innerHTML = `<div style="font-size:4rem; font-weight:900; color:var(--accent-pink);">${count}</div>`;
+                            } else {
+                                animArea.innerHTML = `<div style="font-size:2rem; font-weight:800; color:var(--accent-gold);">✨ 두근두근! ✨</div>`;
+                            }
+                        }, 1000);
+                    }
+
+                } else if (data.status === 'completed' && data.winner) {
+                    if (intervalId) clearInterval(intervalId);
+
+                    document.getElementById('displayDrawing').style.display = 'none';
+                    document.getElementById('displayIdle').style.display = 'none';
+
+                    document.getElementById('displayWinnerUser').innerText = `🎉 ${data.winner.nickname} 님`;
+                    document.getElementById('displayWinnerSong').innerText = `🎵 ${data.winner.songTitle}`;
+                    document.getElementById('displayResultCard').style.display = 'block';
+
+                    confetti({ particleCount: 180, spread: 100, origin: { y: 0.5 } });
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <div class="on-air-badge">
+            <div class="on-air-dot"></div> ON AIR
+        </div>
+        <h1>사랑부 보이는 라디오</h1>
+        <div class="radio-freq">FM 100.4 MHz • LIVE STUDIO</div>
+    </div>
+
+    <div class="content">
+        <!-- 1. 청취자 화면 -->
+        <div id="userSection" class="view-section">
+            <form id="storyForm" onsubmit="submitStory(event)">
+                <div class="form-group">
+                    <label><i class="fa-solid fa-user-astronaut"></i> 성함 / 닉네임</label>
+                    <input type="text" id="nickname" placeholder="예: 사랑이아빠" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-compact-disc"></i> 신청 찬양 제목</label>
+                    <input type="text" id="songTitle" placeholder="예: 은혜 - 손경민" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-brands fa-youtube" style="color:#ff0000;"></i> 유튜브 영상 링크</label>
+                    <input type="url" id="youtubeUrl" placeholder="https://youtu.be/..." required>
+                </div>
+                <button type="submit" class="btn"><i class="fa-solid fa-paper-plane"></i> 사연 및 신청곡 보내기</button>
+            </form>
+
+            <div id="submittedCard" style="display: none; text-align: center; padding: 20px 0;">
+                <i class="fa-solid fa-circle-check" style="font-size: 3.5rem; color: var(--accent-cyan);"></i>
+                <h2 style="margin-top: 15px; color: #fff;">사연이 스튜디오로 전송되었습니다!</h2>
+                <p style="color: var(--text-sub); margin-top: 8px; font-size: 0.95rem;">잠시 후 라디오 방송을 기대해 주세요.</p>
+                <button class="btn" style="background: rgba(255,255,255,0.1); margin-top:20px; box-shadow:none;" onclick="location.reload()">새 사연 작성</button>
+            </div>
+        </div>
+
+        <!-- 2. 진행자 제어 화면 -->
+        <div id="adminMainSection" class="view-section">
+            <div class="draw-mode-select">
+                <button class="mode-btn active" onclick="setDrawMode('freq', this)">📻 주파수</button>
+                <button class="mode-btn" onclick="setDrawMode('slot', this)">🎰 슬롯머신</button>
+                <button class="mode-btn" onclick="setDrawMode('countdown', this)">⏳ 카운트다운</button>
+            </div>
+
+            <div class="radio-display-box">
+                <i class="fa-solid fa-sliders" style="font-size: 2.5rem; color: var(--accent-pink);"></i>
+                <p style="margin-top: 12px; font-size: 1.05rem; font-weight: 600;">메인 DJ 추첨 콘솔</p>
+            </div>
+
+            <div id="adminResultCard" class="result-card">
+                <div id="adminWinnerUser" style="font-size: 1.2rem; font-weight: bold; color: var(--accent-gold);"></div>
+                <div id="adminWinnerSong" style="color: #fff; margin-top: 6px;"></div>
+                <a id="adminWinnerYoutube" href="#" target="_blank" class="youtube-btn"><i class="fa-brands fa-youtube"></i> 유튜브로 음악 재생하기</a>
+            </div>
+
+            <button class="btn" onclick="startRandomDraw()" style="margin-top: 15px;"><i class="fa-solid fa-dice"></i> 선택한 연출로 추첨 시작</button>
+            <p style="text-align: center; margin-top: 15px; font-size: 0.95rem; color: var(--text-sub);">
+                현재 실시간 접수된 사연: <strong id="storyCount" style="color: var(--accent-cyan); font-size: 1.1rem;">0</strong>건
+            </p>
+        </div>
+
+        <!-- 3. 전광판 화면 -->
+        <div id="displaySection" class="view-section">
+            <div class="radio-display-box" style="min-height: 240px;">
+                <div id="displayIdle">
+                    <i class="fa-solid fa-tower-broadcast" style="font-size: 3.5rem; color: var(--accent-cyan); margin-bottom: 15px;"></i>
+                    <p style="font-size: 1.2rem; font-weight: 700; color: #fff;">보이는 라디오 생방송 중</p>
+                    <p style="font-size: 0.9rem; color: var(--text-sub); margin-top: 5px;">사연 추첨을 기다리고 있습니다...</p>
+                </div>
+                <div id="displayDrawing" style="display: none;">
+                    <div id="drawAnimationArea"></div>
+                </div>
+            </div>
+
+            <div id="displayResultCard" class="result-card" style="padding: 25px;">
+                <div id="displayWinnerUser" style="font-size: 1.6rem; font-weight: bold; color: var(--accent-gold);"></div>
+                <div id="displayWinnerSong" style="color: #fff; margin-top: 10px; font-size: 1.2rem;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
