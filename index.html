@@ -139,7 +139,6 @@
         }
         .btn:hover { transform: translateY(-2px); }
 
-        /* 5종 모드 버튼 스크롤형 디자인 */
         .draw-mode-select {
             display: flex; gap: 6px; margin-bottom: 15px;
             overflow-x: auto; padding-bottom: 6px;
@@ -179,7 +178,6 @@
             box-shadow: 0 4px 15px rgba(255, 0, 0, 0.5);
         }
 
-        /* 5가지 세련된 추첨 애니메이션 스타일 정의 */
         .slot-text {
             font-size: 2.1rem; font-weight: 900; color: var(--accent-gold);
             text-shadow: 0 0 20px rgba(255, 183, 3, 0.8);
@@ -237,7 +235,6 @@
         }
         @keyframes eqAnim { 0% { height: 5px; } 100% { height: 28px; } }
 
-        /* 유튜브 썸네일 스타일 */
         .yt-thumbnail-wrapper {
             width: 100%;
             height: 185px;
@@ -385,7 +382,6 @@
             });
         };
 
-        // 5가지 화려한 연출 실행 함수
         function runDrawAnimation(containerId, drawMode) {
             const container = document.getElementById(containerId);
             let timer = null;
@@ -410,7 +406,7 @@
                     `;
                 }, 80);
             } else if (drawMode === 'countdown') {
-                let count = 5; // 5초 카운트다운
+                let count = 5;
                 container.innerHTML = `<div class="countdown-num">${count}</div>`;
                 timer = setInterval(() => {
                     count--;
@@ -498,9 +494,12 @@
                 const data = snapshot.val();
                 if (!data) return;
 
+                // 타임스탬프 검증 (10초 이상 지난 과거 상태는 자동 실행 방지)
+                const isRecent = data.timestamp && (Date.now() - data.timestamp < 10000);
+
                 const displayBox = document.getElementById('adminDisplayBox');
 
-                if (data.status === 'drawing') {
+                if (data.status === 'drawing' && isRecent) {
                     if (adminInterval) clearInterval(adminInterval);
                     document.getElementById('adminResultCard').style.display = 'none';
                     adminInterval = runDrawAnimation('adminDisplayBox', data.drawMode);
@@ -527,7 +526,16 @@
                     document.getElementById('adminWinnerYoutube').href = data.winner.youtubeUrl;
                     document.getElementById('adminResultCard').style.display = 'block';
 
-                    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                    if (isRecent) {
+                        confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                    }
+                } else {
+                    if (adminInterval) clearInterval(adminInterval);
+                    displayBox.innerHTML = `
+                        <i class="fa-solid fa-sliders" style="font-size: 2.2rem; color: var(--accent-pink);"></i>
+                        <p style="margin-top: 10px; font-size: 1.05rem; font-weight: 600;">메인 DJ 추첨 콘솔</p>
+                        <p style="color:var(--text-sub); font-size:0.8rem; margin-top:4px;">위 연출을 선택 후 하단 버튼을 클릭하세요 (5초 연출)</p>
+                    `;
                 }
             });
         }
@@ -547,7 +555,6 @@
             }
         };
 
-        // 5초 타임 적용 추첨 함수
         window.startRandomDraw = function() {
             const availableStories = localStories.filter(s => !s.isDrawn);
 
@@ -569,7 +576,6 @@
                 timestamp: Date.now()
             });
 
-            // 추첨 대기 시간을 5000ms(5초)로 지정
             setTimeout(() => {
                 update(ref(db, `stories/${winner.id}`), { isDrawn: true });
 
@@ -589,9 +595,10 @@
                 const data = snapshot.val();
                 if (!data) return;
 
+                const isRecent = data.timestamp && (Date.now() - data.timestamp < 10000);
                 const displayBox = document.getElementById('displayBox');
 
-                if (data.status === 'drawing') {
+                if (data.status === 'drawing' && isRecent) {
                     if (displayInterval) clearInterval(displayInterval);
                     document.getElementById('displayResultCard').style.display = 'none';
                     displayInterval = runDrawAnimation('displayBox', data.drawMode);
@@ -600,27 +607,38 @@
 
                     const thumbUrl = getYoutubeThumbnail(data.winner.youtubeUrl);
 
+                    // 전광판 화면에 유튜브 썸네일 카드 시각화
                     displayBox.innerHTML = `
                         <a href="${data.winner.youtubeUrl}" target="_blank" style="width:100%; text-decoration:none;">
-                            <div class="yt-thumbnail-wrapper" style="height:210px;">
+                            <div class="yt-thumbnail-wrapper" style="height:200px;">
                                 <img src="${thumbUrl}" class="yt-thumbnail-img" alt="유튜브 썸네일">
                                 <div class="yt-play-overlay">
                                     <i class="fa-brands fa-youtube yt-play-icon" style="font-size:3.8rem;"></i>
                                 </div>
                             </div>
                         </a>
-                        <div style="font-size:1.6rem; font-weight:bold; color:var(--accent-gold);">✨ 당첨을 축하합니다! ✨</div>
+                        <div style="font-size:1.5rem; font-weight:bold; color:var(--accent-gold);">✨ 당첨을 축하합니다! ✨</div>
                     `;
 
                     document.getElementById('displayWinnerUser').innerText = `🎉 ${data.winner.nickname} 님`;
                     document.getElementById('displayWinnerSong').innerText = `🎵 ${data.winner.songTitle}`;
+                    document.getElementById('displayWinnerYoutube').href = data.winner.youtubeUrl;
                     document.getElementById('displayResultCard').style.display = 'block';
 
-                    confetti({ particleCount: 180, spread: 100, origin: { y: 0.5 } });
-                    setTimeout(() => {
-                        confetti({ particleCount: 120, angle: 60, spread: 60, origin: { x: 0 } });
-                        confetti({ particleCount: 120, angle: 120, spread: 60, origin: { x: 1 } });
-                    }, 300);
+                    if (isRecent) {
+                        confetti({ particleCount: 180, spread: 100, origin: { y: 0.5 } });
+                        setTimeout(() => {
+                            confetti({ particleCount: 120, angle: 60, spread: 60, origin: { x: 0 } });
+                            confetti({ particleCount: 120, angle: 120, spread: 60, origin: { x: 1 } });
+                        }, 300);
+                    }
+                } else {
+                    if (displayInterval) clearInterval(displayInterval);
+                    displayBox.innerHTML = `
+                        <i class="fa-solid fa-tower-broadcast" style="font-size: 3.5rem; color: var(--accent-cyan); margin-bottom: 15px;"></i>
+                        <p style="font-size: 1.2rem; font-weight: 700; color: #fff;">보이는 라디오 생방송 중</p>
+                        <p style="font-size: 0.9rem; color: var(--text-sub); margin-top: 5px;">사연 추첨을 기다리고 있습니다...</p>
+                    `;
                 }
             });
         }
@@ -666,7 +684,6 @@
 
         <!-- 2. 진행자 제어 및 관리자 화면 -->
         <div id="adminMainSection" class="view-section">
-            <!-- 확장된 5가지 연출 선택 버튼 -->
             <div class="draw-mode-select">
                 <button class="mode-btn active" onclick="setDrawMode('freq', this)">📻 주파수</button>
                 <button class="mode-btn" onclick="setDrawMode('slot', this)">🎰 슬롯머신</button>
@@ -675,7 +692,6 @@
                 <button class="mode-btn" onclick="setDrawMode('radar', this)">⚡ 라이브 스캐너</button>
             </div>
 
-            <!-- 진행자용 메인 디스플레이 박스 -->
             <div id="adminDisplayBox" class="radio-display-box">
                 <i class="fa-solid fa-sliders" style="font-size: 2.2rem; color: var(--accent-pink);"></i>
                 <p style="margin-top: 10px; font-size: 1.05rem; font-weight: 600;">메인 DJ 추첨 콘솔</p>
@@ -690,7 +706,6 @@
 
             <button class="btn" onclick="startRandomDraw()" style="margin-top: 15px;"><i class="fa-solid fa-dice"></i> 선택한 연출로 추첨 시작 (5초)</button>
 
-            <!-- 사연 관리 목록 영역 -->
             <div class="story-list-container">
                 <div class="story-list-header">
                     <span><i class="fa-solid fa-list-check"></i> 접수 사연 목록 (<span id="undrawnCount" style="color:var(--accent-gold);">0</span>/<span id="storyCount">0</span>)</span>
@@ -712,6 +727,7 @@
             <div id="displayResultCard" class="result-card" style="padding: 20px;">
                 <div id="displayWinnerUser" style="font-size: 1.6rem; font-weight: bold; color: var(--accent-gold);"></div>
                 <div id="displayWinnerSong" style="color: #fff; margin-top: 8px; font-size: 1.1rem;"></div>
+                <a id="displayWinnerYoutube" href="#" target="_blank" class="youtube-btn" style="margin-top: 15px;"><i class="fa-brands fa-youtube"></i> 유튜브 영상 보기</a>
             </div>
         </div>
     </div>
