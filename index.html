@@ -406,7 +406,7 @@
                     `;
                 }, 80);
             } else if (drawMode === 'countdown') {
-                let count = 5;
+                let count = 4;
                 container.innerHTML = `<div class="countdown-num">${count}</div>`;
                 timer = setInterval(() => {
                     count--;
@@ -418,7 +418,7 @@
                             <div style="font-size:2.2rem; font-weight:900; color:var(--accent-gold);">✨ 당첨자 발표! ✨</div>
                         `;
                     }
-                }, 1000);
+                }, 900);
             } else if (drawMode === 'vinyl') {
                 timer = setInterval(() => {
                     const randIdx = Math.floor(Math.random() * (localStories.length || 1));
@@ -492,12 +492,20 @@
 
             onValue(currentStateRef, (snapshot) => {
                 const data = snapshot.val();
-                if (!data) return;
-
-                // 타임스탬프 검증 (10초 이상 지난 과거 상태는 자동 실행 방지)
-                const isRecent = data.timestamp && (Date.now() - data.timestamp < 10000);
-
                 const displayBox = document.getElementById('adminDisplayBox');
+
+                if (!data || data.status === 'idle') {
+                    if (adminInterval) clearInterval(adminInterval);
+                    document.getElementById('adminResultCard').style.display = 'none';
+                    displayBox.innerHTML = `
+                        <i class="fa-solid fa-sliders" style="font-size: 2.2rem; color: var(--accent-pink);"></i>
+                        <p style="margin-top: 10px; font-size: 1.05rem; font-weight: 600;">메인 DJ 추첨 콘솔</p>
+                        <p style="color:var(--text-sub); font-size:0.8rem; margin-top:4px;">위 연출을 선택 후 하단 버튼을 클릭하세요 (3.8초 연출)</p>
+                    `;
+                    return;
+                }
+
+                const isRecent = data.timestamp && (Date.now() - data.timestamp < 10000);
 
                 if (data.status === 'drawing' && isRecent) {
                     if (adminInterval) clearInterval(adminInterval);
@@ -529,13 +537,6 @@
                     if (isRecent) {
                         confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
                     }
-                } else {
-                    if (adminInterval) clearInterval(adminInterval);
-                    displayBox.innerHTML = `
-                        <i class="fa-solid fa-sliders" style="font-size: 2.2rem; color: var(--accent-pink);"></i>
-                        <p style="margin-top: 10px; font-size: 1.05rem; font-weight: 600;">메인 DJ 추첨 콘솔</p>
-                        <p style="color:var(--text-sub); font-size:0.8rem; margin-top:4px;">위 연출을 선택 후 하단 버튼을 클릭하세요 (5초 연출)</p>
-                    `;
                 }
             });
         }
@@ -547,10 +548,17 @@
             }
         };
 
+        // 추첨 상태 및 당첨 결과 초기화
         window.resetDrawnStatus = function() {
-            if (confirm("모든 사연의 추첨 완료 상태를 초기화하시겠습니까?")) {
+            if (confirm("모든 사연의 추첨 상태를 초기화하고 처음 상태로 돌리시겠습니까?")) {
                 localStories.forEach(story => {
                     update(ref(db, `stories/${story.id}`), { isDrawn: false });
+                });
+
+                set(currentStateRef, {
+                    status: 'idle',
+                    winner: null,
+                    timestamp: Date.now()
                 });
             }
         };
@@ -576,6 +584,7 @@
                 timestamp: Date.now()
             });
 
+            // 3.8초(3800ms)로 딜레이 시간 조정
             setTimeout(() => {
                 update(ref(db, `stories/${winner.id}`), { isDrawn: true });
 
@@ -585,7 +594,7 @@
                     winner: winner,
                     timestamp: Date.now()
                 });
-            }, 5000);
+            }, 3800);
         };
 
         function initDisplayMode() {
@@ -593,10 +602,20 @@
 
             onValue(currentStateRef, (snapshot) => {
                 const data = snapshot.val();
-                if (!data) return;
+                const displayBox = document.getElementById('displayBox');
+
+                if (!data || data.status === 'idle') {
+                    if (displayInterval) clearInterval(displayInterval);
+                    document.getElementById('displayResultCard').style.display = 'none';
+                    displayBox.innerHTML = `
+                        <i class="fa-solid fa-tower-broadcast" style="font-size: 3.5rem; color: var(--accent-cyan); margin-bottom: 15px;"></i>
+                        <p style="font-size: 1.2rem; font-weight: 700; color: #fff;">보이는 라디오 생방송 중</p>
+                        <p style="font-size: 0.9rem; color: var(--text-sub); margin-top: 5px;">사연 추첨을 기다리고 있습니다...</p>
+                    `;
+                    return;
+                }
 
                 const isRecent = data.timestamp && (Date.now() - data.timestamp < 10000);
-                const displayBox = document.getElementById('displayBox');
 
                 if (data.status === 'drawing' && isRecent) {
                     if (displayInterval) clearInterval(displayInterval);
@@ -607,7 +626,6 @@
 
                     const thumbUrl = getYoutubeThumbnail(data.winner.youtubeUrl);
 
-                    // 전광판 화면에 유튜브 썸네일 카드 시각화
                     displayBox.innerHTML = `
                         <a href="${data.winner.youtubeUrl}" target="_blank" style="width:100%; text-decoration:none;">
                             <div class="yt-thumbnail-wrapper" style="height:200px;">
@@ -632,13 +650,6 @@
                             confetti({ particleCount: 120, angle: 120, spread: 60, origin: { x: 1 } });
                         }, 300);
                     }
-                } else {
-                    if (displayInterval) clearInterval(displayInterval);
-                    displayBox.innerHTML = `
-                        <i class="fa-solid fa-tower-broadcast" style="font-size: 3.5rem; color: var(--accent-cyan); margin-bottom: 15px;"></i>
-                        <p style="font-size: 1.2rem; font-weight: 700; color: #fff;">보이는 라디오 생방송 중</p>
-                        <p style="font-size: 0.9rem; color: var(--text-sub); margin-top: 5px;">사연 추첨을 기다리고 있습니다...</p>
-                    `;
                 }
             });
         }
@@ -687,7 +698,7 @@
             <div class="draw-mode-select">
                 <button class="mode-btn active" onclick="setDrawMode('freq', this)">📻 주파수</button>
                 <button class="mode-btn" onclick="setDrawMode('slot', this)">🎰 슬롯머신</button>
-                <button class="mode-btn" onclick="setDrawMode('countdown', this)">⏳ 카운트다운(5s)</button>
+                <button class="mode-btn" onclick="setDrawMode('countdown', this)">⏳ 카운트다운</button>
                 <button class="mode-btn" onclick="setDrawMode('vinyl', this)">💿 LP 회전</button>
                 <button class="mode-btn" onclick="setDrawMode('radar', this)">⚡ 라이브 스캐너</button>
             </div>
@@ -695,7 +706,7 @@
             <div id="adminDisplayBox" class="radio-display-box">
                 <i class="fa-solid fa-sliders" style="font-size: 2.2rem; color: var(--accent-pink);"></i>
                 <p style="margin-top: 10px; font-size: 1.05rem; font-weight: 600;">메인 DJ 추첨 콘솔</p>
-                <p style="color:var(--text-sub); font-size:0.8rem; margin-top:4px;">위 연출을 선택 후 하단 버튼을 클릭하세요 (5초 연출)</p>
+                <p style="color:var(--text-sub); font-size:0.8rem; margin-top:4px;">위 연출을 선택 후 하단 버튼을 클릭하세요 (3.8초 연출)</p>
             </div>
 
             <div id="adminResultCard" class="result-card">
@@ -704,7 +715,7 @@
                 <a id="adminWinnerYoutube" href="#" target="_blank" class="youtube-btn"><i class="fa-brands fa-youtube"></i> 유튜브에서 바로 재생하기</a>
             </div>
 
-            <button class="btn" onclick="startRandomDraw()" style="margin-top: 15px;"><i class="fa-solid fa-dice"></i> 선택한 연출로 추첨 시작 (5초)</button>
+            <button class="btn" onclick="startRandomDraw()" style="margin-top: 15px;"><i class="fa-solid fa-dice"></i> 선택한 연출로 추첨 시작 (3.8초)</button>
 
             <div class="story-list-container">
                 <div class="story-list-header">
