@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사랑부 보이는 라디오 📻</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root { --primary-color: #ff6b81; --primary-hover: #ff4757; --card-bg: #ffffff; --text-color: #2f3542; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Pretendard Variable", sans-serif; }
+        body { background-color: #ffeaa7; color: var(--text-color); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .app-container { width: 100%; max-width: 480px; background: var(--card-bg); border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow: hidden; border: 4px solid #fff; }
+        .header { background: linear-gradient(135deg, #ff758c, #ff7eb3); color: white; padding: 25px 20px; text-align: center; position: relative; }
+        .header h1 { font-size: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .content { padding: 25px; }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; color: #4b6584; }
+        .form-group input { width: 100%; padding: 14px; border: 2px solid #f1f2f6; border-radius: 12px; font-size: 1rem; outline: none; }
+        .btn { width: 100%; padding: 15px; background: var(--primary-color); color: white; border: none; border-radius: 12px; font-size: 1.05rem; font-weight: 700; cursor: pointer; }
+        .draw-box { background: #f8f9fa; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px; border: 2px dashed #ced6e0; min-height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .result-card { display: none; background: #fff; border: 3px solid var(--primary-color); border-radius: 16px; padding: 20px; text-align: center; margin-top: 15px; }
+        .youtube-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #ff0000; color: white; text-decoration: none; padding: 12px 20px; border-radius: 25px; font-weight: bold; width: 100%; margin-top: 10px; }
+    </style>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        window.__FIREBASE_CONFIG__ = {
+            apiKey: "AIzaSyBtWSnBN89ZmA9H7jjMx06fHE650b7CT-A",
+            authDomain: "sarangbuvisualradio.firebaseapp.com",
+            databaseURL: "https://sarangbuvisualradio-default-rtdb.firebaseio.com",
+            projectId: "sarangbuvisualradio",
+            storageBucket: "sarangbuvisualradio.firebasestorage.app",
+            messagingSenderId: "577953137544",
+            appId: "1:577953137544:web:423712a3f3491866fc703d",
+            measurementId: "G-76RPNG3JKL"
+        };
+
+        const app = initializeApp(window.__FIREBASE_CONFIG__);
+        const db = getDatabase(app);
+
+        const storiesRef = ref(db, 'stories');
+        const currentStateRef = ref(db, 'state/current');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode'); 
+
+        let localStories = [];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (mode === 'admin') {
+                document.getElementById('adminMainSection').classList.add('active');
+                initAdminMode();
+            } else if (mode === 'display') {
+                document.getElementById('displaySection').classList.add('active');
+                initDisplayMode();
+            } else {
+                document.getElementById('userSection').classList.add('active');
+            }
+        });
+
+        // 1. 청취자 사연 제출
+        window.submitStory = function(e) {
+            e.preventDefault();
+            const nickname = document.getElementById('nickname').value.trim();
+            const songTitle = document.getElementById('songTitle').value.trim();
+            const youtubeUrl = document.getElementById('youtubeUrl').value.trim();
+
+            push(storiesRef, {
+                nickname,
+                songTitle,
+                youtubeUrl,
+                createdAt: Date.now()
+            }).then(() => {
+                document.getElementById('storyForm').style.display = 'none';
+                document.getElementById('submittedCard').style.display = 'block';
+            });
+        };
+
+        // 2. 진행자 실시간 데이터 감지
+        function initAdminMode() {
+            onValue(storiesRef, (snapshot) => {
+                const data = snapshot.val();
+                localStories = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        localStories.push({ id: key, ...data[key] });
+                    });
+                }
+                document.getElementById('storyCount').innerText = localStories.length;
+            });
+        }
+
+        // 3. 추첨 실행 및 동기화
+        window.startRandomDraw = function() {
+            if (localStories.length === 0) {
+                alert("접수된 사연이 없습니다!");
+                return;
+            }
+
+            const winner = localStories[Math.floor(Math.random() * localStories.length)];
+
+            set(currentStateRef, {
+                status: 'drawing',
+                winner: null,
+                timestamp: Date.now()
+            });
+
+            setTimeout(() => {
+                set(currentStateRef, {
+                    status: 'completed',
+                    winner: winner,
+                    timestamp: Date.now()
+                });
+
+                document.getElementById('adminWinnerUser').innerText = `👤 ${winner.nickname} 님`;
+                document.getElementById('adminWinnerSong').innerText = `🎵 ${winner.songTitle}`;
+                document.getElementById('adminWinnerYoutube').href = winner.youtubeUrl;
+                document.getElementById('adminResultCard').style.display = 'block';
+
+                confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+            }, 2500);
+        };
+
+        // 4. 전광판 실시간 수신
+        function initDisplayMode() {
+            onValue(currentStateRef, (snapshot) => {
+                const data = snapshot.val();
+                if (!data) return;
+
+                if (data.status === 'drawing') {
+                    document.getElementById('displayIdle').style.display = 'none';
+                    document.getElementById('displayResultCard').style.display = 'none';
+                    document.getElementById('displayDrawing').style.display = 'block';
+                } else if (data.status === 'completed' && data.winner) {
+                    document.getElementById('displayDrawing').style.display = 'none';
+                    document.getElementById('displayIdle').style.display = 'none';
+
+                    document.getElementById('displayWinnerUser').innerText = `👤 ${data.winner.nickname} 님`;
+                    document.getElementById('displayWinnerSong').innerText = `🎵 ${data.winner.songTitle}`;
+                    document.getElementById('displayResultCard').style.display = 'block';
+
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.5 } });
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <h1><i class="fa-solid fa-radio"></i> 사랑부 보이는 라디오</h1>
+    </div>
+
+    <div class="content">
+        <!-- 1. 청취자 화면 ( 기본 URL ) -->
+        <div id="userSection" class="view-section">
+            <form id="storyForm" onsubmit="submitStory(event)">
+                <div class="form-group">
+                    <label><i class="fa-solid fa-user"></i> 닉네임 (이름)</label>
+                    <input type="text" id="nickname" placeholder="예: 사랑이아빠" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-music"></i> 찬양 제목</label>
+                    <input type="text" id="songTitle" placeholder="예: 은혜 - 손경민" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-brands fa-youtube"></i> 유튜브 링크</label>
+                    <input type="url" id="youtubeUrl" placeholder="https://youtu.be/..." required>
+                </div>
+                <button type="submit" class="btn">사연 제출하기</button>
+            </form>
+
+            <div id="submittedCard" style="display: none; text-align: center;">
+                <i class="fa-solid fa-circle-check" style="font-size: 3rem; color: #2ed573;"></i>
+                <h2 style="margin-top: 10px;">사연이 접수되었습니다!</h2>
+                <button class="btn" style="background:#74b9ff; margin-top:15px;" onclick="location.reload()">다른 사연 작성하기</button>
+            </div>
+        </div>
+
+        <!-- 2. 진행자 제어 화면 ( /?mode=admin ) -->
+        <div id="adminMainSection" class="view-section">
+            <div class="draw-box">
+                <i class="fa-solid fa-gift" style="font-size: 3rem; color: #ff6b81;"></i>
+                <p style="margin-top: 10px;">버튼을 누르면 추첨이 시작됩니다.</p>
+            </div>
+
+            <div id="adminResultCard" class="result-card">
+                <div id="adminWinnerUser" style="font-size: 1.3rem; font-weight: bold;"></div>
+                <div id="adminWinnerSong" style="color: #57606f; margin-top: 5px;"></div>
+                <a id="adminWinnerYoutube" href="#" target="_blank" class="youtube-btn">유튜브 재생</a>
+            </div>
+
+            <button class="btn" onclick="startRandomDraw()" style="margin-top: 15px;">추첨 시작</button>
+            <p style="text-align: center; margin-top: 15px; font-size: 0.9rem; color: #a4b0be;">
+                실시간 접수 수: <strong id="storyCount" style="color: #ff6b81;">0</strong>개
+            </p>
+        </div>
+
+        <!-- 3. 전광판 화면 ( /?mode=display ) -->
+        <div id="displaySection" class="view-section">
+            <div class="draw-box">
+                <div id="displayIdle">
+                    <i class="fa-solid fa-tv" style="font-size: 3rem; color: #ff6b81;"></i>
+                    <p style="margin-top: 10px;">라디오 진행 대기 중입니다...</p>
+                </div>
+                <div id="displayDrawing" style="display: none;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #ff6b81;">🎲 사연을 추첨하는 중입니다!</div>
+                </div>
+            </div>
+
+            <div id="displayResultCard" class="result-card">
+                <div id="displayWinnerUser" style="font-size: 1.5rem; font-weight: bold;"></div>
+                <div id="displayWinnerSong" style="color: #57606f; margin-top: 8px; font-size: 1.1rem;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
