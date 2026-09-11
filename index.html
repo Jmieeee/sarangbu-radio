@@ -17,6 +17,7 @@
             --accent-gold: #ffb703;
             --text-main: #ffffff;
             --text-sub: #a0a8c0;
+            --danger-color: #ff4757;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Pretendard Variable", sans-serif; }
@@ -36,7 +37,7 @@
 
         .app-container {
             width: 100%;
-            max-width: 500px;
+            max-width: 520px;
             background: var(--card-bg);
             border-radius: 28px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 42, 116, 0.2);
@@ -108,6 +109,11 @@
             background: rgba(0, 0, 0, 0.3);
             border: 1.5px solid rgba(255, 255, 255, 0.1);
             border-radius: 14px; font-size: 1rem; color: #fff; outline: none;
+            transition: all 0.3s;
+        }
+        .form-group input:focus {
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 10px rgba(255, 42, 116, 0.3);
         }
 
         .radio-display-box {
@@ -120,6 +126,7 @@
             justify-content: center; align-items: center;
             box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
             position: relative;
+            overflow: hidden;
         }
 
         .btn {
@@ -130,6 +137,7 @@
             box-shadow: 0 8px 20px rgba(255, 42, 116, 0.4);
             transition: all 0.2s ease;
         }
+        .btn:hover { transform: translateY(-2px); }
 
         .draw-mode-select {
             display: flex; gap: 8px; margin-bottom: 15px;
@@ -139,6 +147,7 @@
             flex: 1; padding: 10px; background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
             color: var(--text-sub); font-size: 0.85rem; cursor: pointer; font-weight: 600;
+            transition: all 0.2s;
         }
 
         .mode-btn.active {
@@ -150,29 +159,105 @@
             display: none; background: rgba(255, 255, 255, 0.05);
             border: 2px solid var(--accent-gold); border-radius: 18px;
             padding: 20px; text-align: center; margin-top: 15px;
+            box-shadow: 0 0 25px rgba(255, 183, 3, 0.25);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .youtube-btn {
             display: inline-flex; align-items: center; justify-content: center;
             gap: 8px; background: #ff0000; color: white; text-decoration: none;
             padding: 12px 20px; border-radius: 25px; font-weight: bold; width: 100%; margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
         }
 
         .slot-text {
-            font-size: 1.8rem; font-weight: 800; color: var(--accent-gold);
-            text-shadow: 0 0 15px rgba(255, 183, 3, 0.5);
-            animation: bounce 0.3s infinite alternate;
+            font-size: 2rem; font-weight: 800; color: var(--accent-gold);
+            text-shadow: 0 0 15px rgba(255, 183, 3, 0.6);
+            animation: slotBounce 0.15s infinite alternate;
         }
 
-        @keyframes bounce {
-            0% { transform: translateY(-3px); }
-            100% { transform: translateY(3px); }
+        @keyframes slotBounce {
+            0% { transform: translateY(-4px) scale(0.98); }
+            100% { transform: translateY(4px) scale(1.02); }
+        }
+
+        .countdown-num {
+            font-size: 5.5rem; font-weight: 900; color: var(--accent-pink);
+            text-shadow: 0 0 30px var(--accent-pink);
+            animation: zoomPulse 0.8s infinite;
+        }
+
+        @keyframes zoomPulse {
+            0% { transform: scale(0.6); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .story-list-container {
+            margin-top: 25px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 15px;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .story-list-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px; padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.95rem; font-weight: 700; color: var(--accent-cyan);
+        }
+
+        .story-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            font-size: 0.88rem;
+        }
+
+        .story-item.drawn {
+            opacity: 0.5;
+            background: rgba(0, 0, 0, 0.4);
+            border-style: dashed;
+        }
+
+        .story-info { flex: 1; margin-right: 10px; }
+        .story-info .nick { font-weight: bold; color: #fff; }
+        .story-info .song { color: var(--text-sub); font-size: 0.8rem; margin-top: 2px; }
+        .drawn-tag {
+            font-size: 0.75rem; background: rgba(255, 183, 3, 0.2); color: var(--accent-gold);
+            padding: 2px 6px; border-radius: 4px; margin-left: 6px; border: 1px solid var(--accent-gold);
+        }
+
+        .delete-btn {
+            background: rgba(255, 71, 87, 0.2);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .delete-btn:hover {
+            background: var(--danger-color);
+            color: #fff;
         }
     </style>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, set, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         window.__FIREBASE_CONFIG__ = {
             apiKey: "AIzaSyBtWSnBN89ZmA9H7jjMx06fHE650b7CT-A",
@@ -195,7 +280,7 @@
         const mode = urlParams.get('mode'); 
 
         let localStories = [];
-        let selectedDrawMode = 'freq'; // 기본값: 주파수 모드
+        let selectedDrawMode = 'freq';
 
         window.addEventListener('DOMContentLoaded', () => {
             if (mode === 'admin') {
@@ -221,8 +306,13 @@
             const songTitle = document.getElementById('songTitle').value.trim();
             const youtubeUrl = document.getElementById('youtubeUrl').value.trim();
 
-            push(storiesRef, { nickname, songTitle, youtubeUrl, createdAt: Date.now() })
-            .then(() => {
+            push(storiesRef, {
+                nickname,
+                songTitle,
+                youtubeUrl,
+                isDrawn: false,
+                createdAt: Date.now()
+            }).then(() => {
                 document.getElementById('storyForm').style.display = 'none';
                 document.getElementById('submittedCard').style.display = 'block';
             });
@@ -232,20 +322,70 @@
             onValue(storiesRef, (snapshot) => {
                 const data = snapshot.val();
                 localStories = [];
+                const storyListEl = document.getElementById('adminStoryList');
+                storyListEl.innerHTML = '';
+
                 if (data) {
-                    Object.keys(data).forEach(key => localStories.push({ id: key, ...data[key] }));
+                    Object.keys(data).forEach(key => {
+                        localStories.push({ id: key, ...data[key] });
+                    });
                 }
+
+                const undrawnList = localStories.filter(s => !s.isDrawn);
                 document.getElementById('storyCount').innerText = localStories.length;
+                document.getElementById('undrawnCount').innerText = undrawnList.length;
+
+                if (localStories.length === 0) {
+                    storyListEl.innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:15px; font-size:0.85rem;">접수된 사연이 없습니다.</div>';
+                    return;
+                }
+
+                [...localStories].reverse().forEach(story => {
+                    const item = document.createElement('div');
+                    item.className = `story-item ${story.isDrawn ? 'drawn' : ''}`;
+                    item.innerHTML = `
+                        <div class="story-info">
+                            <div class="nick">
+                                ${story.nickname} 
+                                ${story.isDrawn ? '<span class="drawn-tag">추첨완료</span>' : ''}
+                            </div>
+                            <div class="song">🎵 ${story.songTitle}</div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteStory('${story.id}')"><i class="fa-solid fa-trash"></i> 삭제</button>
+                    `;
+                    storyListEl.appendChild(item);
+                });
             });
         }
 
+        window.deleteStory = function(storyId) {
+            if (confirm("이 사연을 삭제하시겠습니까?")) {
+                const singleStoryRef = ref(db, `stories/${storyId}`);
+                remove(singleStoryRef);
+            }
+        };
+
+        window.resetDrawnStatus = function() {
+            if (confirm("모든 사연의 추첨 완료 상태를 초기화하시겠습니까?")) {
+                localStories.forEach(story => {
+                    update(ref(db, `stories/${story.id}`), { isDrawn: false });
+                });
+            }
+        };
+
         window.startRandomDraw = function() {
-            if (localStories.length === 0) {
-                alert("접수된 사연이 없습니다!");
+            const availableStories = localStories.filter(s => !s.isDrawn);
+
+            if (availableStories.length === 0) {
+                if (localStories.length === 0) {
+                    alert("접수된 사연이 없습니다!");
+                } else {
+                    alert("모든 사연이 이미 추첨되었습니다! '추첨 상태 초기화'를 누르면 다시 추첨할 수 있습니다.");
+                }
                 return;
             }
 
-            const winner = localStories[Math.floor(Math.random() * localStories.length)];
+            const winner = availableStories[Math.floor(Math.random() * availableStories.length)];
 
             set(currentStateRef, {
                 status: 'drawing',
@@ -255,6 +395,8 @@
             });
 
             setTimeout(() => {
+                update(ref(db, `stories/${winner.id}`), { isDrawn: true });
+
                 set(currentStateRef, {
                     status: 'completed',
                     drawMode: selectedDrawMode,
@@ -267,51 +409,63 @@
                 document.getElementById('adminWinnerYoutube').href = winner.youtubeUrl;
                 document.getElementById('adminResultCard').style.display = 'block';
 
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-            }, 3500);
+                confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+            }, 3800);
         };
 
         function initDisplayMode() {
-            let intervalId = null;
+            let activeInterval = null;
 
             onValue(currentStateRef, (snapshot) => {
                 const data = snapshot.val();
                 if (!data) return;
 
+                const animArea = document.getElementById('drawAnimationArea');
+
                 if (data.status === 'drawing') {
+                    if (activeInterval) clearInterval(activeInterval);
+
                     document.getElementById('displayIdle').style.display = 'none';
                     document.getElementById('displayResultCard').style.display = 'none';
                     document.getElementById('displayDrawing').style.display = 'block';
 
-                    const animArea = document.getElementById('drawAnimationArea');
-
                     if (data.drawMode === 'freq') {
-                        let freq = 88.1;
-                        intervalId = setInterval(() => {
-                            freq = (Math.random() * (107.9 - 88.1) + 88.1).toFixed(1);
-                            animArea.innerHTML = `<div style="font-size:2.5rem; font-weight:800; color:var(--accent-cyan);">📻 FM ${freq} MHz</div><p style="color:var(--text-sub); margin-top:5px;">주파수 탐색 중...</p>`;
+                        activeInterval = setInterval(() => {
+                            const freq = (Math.random() * (107.9 - 88.1) + 88.1).toFixed(1);
+                            animArea.innerHTML = `
+                                <i class="fa-solid fa-radio fa-bounce" style="font-size:2.8rem; color:var(--accent-pink); margin-bottom:12px;"></i>
+                                <div style="font-size:2.4rem; font-weight:800; color:var(--accent-cyan);">📻 FM ${freq} MHz</div>
+                                <p style="color:var(--text-sub); margin-top:8px;">주파수를 조율하며 사연을 찾고 있습니다...</p>
+                            `;
                         }, 80);
                     } else if (data.drawMode === 'slot') {
-                        intervalId = setInterval(() => {
-                            const randIdx = Math.floor(Math.random() * localStories.length);
-                            const tempName = localStories[randIdx]?.nickname || "사연자";
-                            animArea.innerHTML = `<div class="slot-text">🎰 ${tempName} 님</div><p style="color:var(--text-sub); margin-top:5px;">슬롯머신 회전 중!</p>`;
-                        }, 100);
+                        activeInterval = setInterval(() => {
+                            const randIdx = Math.floor(Math.random() * (localStories.length || 1));
+                            const tempName = localStories[randIdx]?.nickname || "행운의 주인공";
+                            const tempSong = localStories[randIdx]?.songTitle || "신청곡 탐색 중";
+                            animArea.innerHTML = `
+                                <div class="slot-text">🎰 ${tempName} 님</div>
+                                <div style="color:var(--text-sub); font-size:1rem; margin-top:8px;">🎵 ${tempSong}</div>
+                            `;
+                        }, 90);
                     } else if (data.drawMode === 'countdown') {
                         let count = 3;
-                        animArea.innerHTML = `<div style="font-size:4rem; font-weight:900; color:var(--accent-pink);">${count}</div>`;
-                        intervalId = setInterval(() => {
+                        animArea.innerHTML = `<div class="countdown-num">${count}</div>`;
+                        activeInterval = setInterval(() => {
                             count--;
                             if (count > 0) {
-                                animArea.innerHTML = `<div style="font-size:4rem; font-weight:900; color:var(--accent-pink);">${count}</div>`;
+                                animArea.innerHTML = `<div class="countdown-num">${count}</div>`;
                             } else {
-                                animArea.innerHTML = `<div style="font-size:2rem; font-weight:800; color:var(--accent-gold);">✨ 두근두근! ✨</div>`;
+                                animArea.innerHTML = `
+                                    <i class="fa-solid fa-star fa-spin" style="font-size:3rem; color:var(--accent-gold); margin-bottom:10px;"></i>
+                                    <div style="font-size:2.2rem; font-weight:800; color:var(--accent-gold);">✨ 당첨자 발표! ✨</div>
+                                `;
                             }
                         }, 1000);
                     }
 
                 } else if (data.status === 'completed' && data.winner) {
-                    if (intervalId) clearInterval(intervalId);
+                    if (activeInterval) clearInterval(activeInterval);
 
                     document.getElementById('displayDrawing').style.display = 'none';
                     document.getElementById('displayIdle').style.display = 'none';
@@ -320,7 +474,11 @@
                     document.getElementById('displayWinnerSong').innerText = `🎵 ${data.winner.songTitle}`;
                     document.getElementById('displayResultCard').style.display = 'block';
 
-                    confetti({ particleCount: 180, spread: 100, origin: { y: 0.5 } });
+                    confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } });
+                    setTimeout(() => {
+                        confetti({ particleCount: 100, angle: 60, spread: 55, origin: { x: 0 } });
+                        confetti({ particleCount: 100, angle: 120, spread: 55, origin: { x: 1 } });
+                    }, 300);
                 }
             });
         }
@@ -338,7 +496,6 @@
     </div>
 
     <div class="content">
-        <!-- 1. 청취자 화면 -->
         <div id="userSection" class="view-section">
             <form id="storyForm" onsubmit="submitStory(event)">
                 <div class="form-group">
@@ -364,7 +521,6 @@
             </div>
         </div>
 
-        <!-- 2. 진행자 제어 화면 -->
         <div id="adminMainSection" class="view-section">
             <div class="draw-mode-select">
                 <button class="mode-btn active" onclick="setDrawMode('freq', this)">📻 주파수</button>
@@ -372,9 +528,9 @@
                 <button class="mode-btn" onclick="setDrawMode('countdown', this)">⏳ 카운트다운</button>
             </div>
 
-            <div class="radio-display-box">
-                <i class="fa-solid fa-sliders" style="font-size: 2.5rem; color: var(--accent-pink);"></i>
-                <p style="margin-top: 12px; font-size: 1.05rem; font-weight: 600;">메인 DJ 추첨 콘솔</p>
+            <div class="radio-display-box" style="min-height: 160px;">
+                <i class="fa-solid fa-sliders" style="font-size: 2.2rem; color: var(--accent-pink);"></i>
+                <p style="margin-top: 10px; font-size: 1.05rem; font-weight: 600;">메인 DJ 추첨 콘솔</p>
             </div>
 
             <div id="adminResultCard" class="result-card">
@@ -384,20 +540,25 @@
             </div>
 
             <button class="btn" onclick="startRandomDraw()" style="margin-top: 15px;"><i class="fa-solid fa-dice"></i> 선택한 연출로 추첨 시작</button>
-            <p style="text-align: center; margin-top: 15px; font-size: 0.95rem; color: var(--text-sub);">
-                현재 실시간 접수된 사연: <strong id="storyCount" style="color: var(--accent-cyan); font-size: 1.1rem;">0</strong>건
-            </p>
+
+            <div class="story-list-container">
+                <div class="story-list-header">
+                    <span><i class="fa-solid fa-list-check"></i> 접수 사연 목록 (<span id="undrawnCount" style="color:var(--accent-gold);">0</span>/<span id="storyCount">0</span>)</span>
+                    <button style="background:none; border:none; color:var(--text-sub); font-size:0.75rem; cursor:pointer; text-decoration:underline;" onclick="resetDrawnStatus()">추첨 상태 초기화</button>
+                </div>
+                <div id="adminStoryList">
+                </div>
+            </div>
         </div>
 
-        <!-- 3. 전광판 화면 -->
         <div id="displaySection" class="view-section">
-            <div class="radio-display-box" style="min-height: 240px;">
+            <div class="radio-display-box" style="min-height: 250px;">
                 <div id="displayIdle">
                     <i class="fa-solid fa-tower-broadcast" style="font-size: 3.5rem; color: var(--accent-cyan); margin-bottom: 15px;"></i>
                     <p style="font-size: 1.2rem; font-weight: 700; color: #fff;">보이는 라디오 생방송 중</p>
                     <p style="font-size: 0.9rem; color: var(--text-sub); margin-top: 5px;">사연 추첨을 기다리고 있습니다...</p>
                 </div>
-                <div id="displayDrawing" style="display: none;">
+                <div id="displayDrawing" style="display: none; width:100%;">
                     <div id="drawAnimationArea"></div>
                 </div>
             </div>
